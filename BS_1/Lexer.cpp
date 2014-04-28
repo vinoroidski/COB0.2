@@ -16,12 +16,8 @@ Lexer::~Lexer() {
 void Lexer::tokenize(string inputFilePath) {
     
     char c;
-    stringstream str;
     string element = "";
     string expression;
-    
-    int valueOfNumber;
-    double valueOfNum;
     
     ifstream myFile;
     ofstream myFileOut;
@@ -39,101 +35,15 @@ void Lexer::tokenize(string inputFilePath) {
                 
                 if(isLiteral(c)) { // we found a literal
                     
-                    element.push_back(c);
-                    
-                    for(int j = i; j < expression.size(); j++) { // we keep saving till end of literal
-                        
-                        c = expression.at(j);
-                        if(!isLiteral(c)) {
-
-                            if(!isNumeral(c)) {
-                                
-                                Token* ttoken = new Token(element);
-                                expressionStore.push_back(ttoken);
-                                
-                                element.clear();
-                                i = j - 1;
-                                break;
-
-                            }
-
-                        }
-                        
-                    }
+                    i = checkForLiteral(expression, element, i);
                     
                 } else if(isNumeral(c)) { // we found a number
                     
-                    element.push_back(c);
+                    i = checkForNumeral(expression, element, i);
                     
-                    for(int j = i; j < expression.size(); j++) { // we save till end of number
-                        c = expression.at(j);
-                        
-                        if(c == ',') { // number has decimal points
-                            
-                            element.push_back(c);
-                            
-                            for(int k = j; k < expression.size(); k++) { // we read till end of decimals
-                                                                         // or check for error
-                                c = expression.at(k);
-                                
-                                if(c == ',') {
-                                    
-                                    // Error - more than one comma
-                                    
-                                } else {
-                                  
-                                    if(isNumeral(c)) {
-                                        
-                                        element.push_back(c);
-                                        
-                                    } else {
-                                        
-                                        j = k - 1;
-                                        break;
-                                        
-                                    }
-                                    
-                                }
-                                
-                            }
-                                
-                            // double saved
-                            str >> element;
-                            str << valueOfNum;
-                            
-                            element.clear();
-                            Token* ttoken = new Token(valueOfNum);
-                            expressionStore.push_back(ttoken);
-                            
-                            i = j - 1;
-                            break;
-                            
-                        } else if(isNumeral(c)) { // if not decimal, keep saving in number
-                            
-                            element.push_back(c);
-                            
-                        } else {
-                            
-                            // integer saved
-                            str >> element;
-                            str << valueOfNumber;
-                            
-                            element.clear();
-                            Token* ttoken = new Token(valueOfNumber);
-                            expressionStore.push_back(ttoken);
-                            
-                            i = j - 1;
-                            break;
-                            
-                        }
-                        
-                    }
+                } else {
                     
-                } else if(isOperation(c)) {
-                    
-                    Token* ttoken = new Token(c);
-                    ttoken->setTokenType(Token::operation);
-                    expressionStore.push_back(ttoken);
+                    i = checkForOperation(expression, element, i);
                     
                 }
                 
@@ -172,8 +82,6 @@ bool Lexer::isNumeral(char c) {
 bool Lexer::isOperation(char c) {
     
     switch(c) {
-        
-        case '='    :   return true;
             
         case '+'    :   return true;   
             
@@ -192,5 +100,153 @@ bool Lexer::isOperation(char c) {
 vector < vector <Token*> > Lexer::getStore() {
     
     return tokenizedExpressions;
+    
+}
+
+
+int Lexer::checkForLiteral(string expression, string element, int i){
+              
+    char c = expression.at(i);
+    
+    element.push_back(c);
+
+    for(int j = i; j < expression.size(); j++) { // we keep saving till end of literal
+
+        c = expression.at(j);
+        if(!isLiteral(c)) {
+
+            if(!isNumeral(c)) {
+
+                Token* ttoken = new Token(element);
+                expressionStore.push_back(ttoken);
+
+                element.clear();
+                return (j - 1);
+
+            }
+
+        }
+
+    }
+
+}
+
+int Lexer::checkForNumeral(string expression, string element, int i) {
+                    
+    stringstream str;
+    
+    int valueOfNumber;
+    
+    char c = expression.at(i);
+    element.push_back(c);
+    
+    for(int j = i; j < expression.size(); j++) { // we save till end of number
+        c = expression.at(j);
+
+        if(c == ',') { // number has decimal points
+
+            return ( checkForDecimal(expression, element, j, str) );
+
+        } else if(isNumeral(c)) { // if not decimal, keep saving in number
+
+            element.push_back(c);
+
+        } else {
+
+            // integer saved
+            str >> element;
+            str << valueOfNumber;
+
+            element.clear();
+            Token* ttoken = new Token(valueOfNumber);
+            expressionStore.push_back(ttoken);
+
+            return (j - 1);
+
+        }
+
+    }
+    
+}
+
+int Lexer::checkForDecimal(string expression, string element, int j, stringstream& str) {
+    
+    double valueOfNum;
+    
+    char c = expression.at(j);
+    element.push_back(c);
+
+    for(int k = j; k < expression.size(); k++) { // we read till end of decimals
+                                                 // or check for error
+        c = expression.at(k);
+
+        if(c == ',') {
+
+            // Error - more than one comma
+
+        } else {
+
+            if(isNumeral(c)) {
+
+                element.push_back(c);
+
+            } else {
+
+                j = k - 1;
+                break;
+
+            }
+
+        }
+
+    }
+
+    // double saved
+    str >> element;
+    str << valueOfNum;
+
+    element.clear();
+    Token* ttoken = new Token(valueOfNum);
+    expressionStore.push_back(ttoken);
+
+    return (j - 1);
+    
+}
+
+int Lexer::checkForOperation(string expression, string element, int i) {
+    
+    char c = expression.at(i);
+    if(c == ':') {
+        
+        c = expression.at(++i);
+        if(c == '=') {
+            
+            element = ":=";
+                   
+            Token* ttoken = new Token(element);
+            ttoken->setTokenType(Token::operation);
+            expressionStore.push_back(ttoken);
+            
+            return i;
+            
+            
+        } else {
+             // TO DO otherwise error
+        }
+        
+    }
+    
+    if(isOperation(c)) {
+                    
+        Token* ttoken = new Token(c);
+        expressionStore.push_back(ttoken);
+        
+        return i;
+
+    } else {
+        
+        // TO DO error for unrecognized element
+        
+    }
     
 }

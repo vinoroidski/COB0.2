@@ -19,6 +19,7 @@ public:
     enum Type{literal, constInt, constDouble, operation, id};
     
     Token();
+    Token(char);
     Token(string);
     Token(int);
     Token(double);

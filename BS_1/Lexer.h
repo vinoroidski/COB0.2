@@ -33,6 +33,11 @@ private:
     bool isLiteral(char);
     bool isNumeral(char);
     bool isOperation(char);
+    
+    int checkForLiteral(string, string, int);
+    int checkForNumeral(string, string, int);
+    int checkForDecimal(string, string, int, stringstream&);
+    int checkForOperation(string, string, int);
 
 };
 

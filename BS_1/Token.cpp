@@ -13,6 +13,13 @@ Token::Token() {
 Token::~Token() {
 }
 
+Token::Token(char c) {
+    
+    this->lit = c;
+    this->tokenType = operation;
+    
+}
+
 Token::Token(string word) {
     
     this->lit = word;
