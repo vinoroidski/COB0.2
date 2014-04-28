@@ -25,11 +25,11 @@ int main(int argc, char** argv) {
     Screener testScreener;
     Lexer testLexer;
 
-    testScreener.readFile("/cygdrive/d/Tools/BS/BS_1/RichtigBS.txt");
+    testScreener.readFile("RichtigBS.txt");
     testScreener.cleanFile();
-    testScreener.writeFile("/cygdrive/d/Tools/BS/BS_1/OutputBS.txt");
+    testScreener.writeFile("OutputBS.txt");
 
-    testLexer.tokenize("/cygdrive/d/Tools/BS/BS_1/OutputBS.txt");
+    testLexer.tokenize("OutputBS.txt");
 
     store = testLexer.getStore();
 
