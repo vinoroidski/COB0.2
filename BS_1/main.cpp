@@ -19,23 +19,45 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
-    
+
     vector< vector<Token*> > store;
-    
+
     Screener testScreener;
     Lexer testLexer;
-    
+
     testScreener.readFile("/cygdrive/d/Tools/BS/BS_1/RichtigBS.txt");
     testScreener.cleanFile();
     testScreener.writeFile("/cygdrive/d/Tools/BS/BS_1/OutputBS.txt");
-    
+
     testLexer.tokenize("/cygdrive/d/Tools/BS/BS_1/OutputBS.txt");
-            
+
     store = testLexer.getStore();
-    Parser testParser(store);
-    
+
+    for (int i = 0; i < store.size(); i++) {
+        for (int j = 0; j < store.at(i).size(); j++) {
+            Token* token = store.at(i).at(j);
+            switch (token->getTokenType()) {
+
+                case Token::literal: cout << "Literal: " << token->getLiteral() << endl;
+                    break;
+                case Token::constInt: cout << "constInt: " << token->getNumber() << endl;
+                    break;
+                case Token::constDouble: cout << "constDouble: " << token->getNum() << endl;
+                    break;
+                case Token::operation: cout << "Operation: " << token->getLiteral() << endl;
+                    break;
+                default: cout << "Error - Unknown Type" << endl;
+
+            }
+
+        }
+        cout << endl;
+    }
+
+    //    Parser testParser(store);
+
     //testParser.parse();
-    
+
     return 0;
 
 }

@@ -140,31 +140,43 @@ int Lexer::checkForNumeral(string expression, string element, int i) {
     char c = expression.at(i);
     element.push_back(c);
     
-    for(int j = i; j < expression.size(); j++) { // we save till end of number
-        c = expression.at(j);
-
-        if(c == ',') { // number has decimal points
-
-            return ( checkForDecimal(expression, element, j, str) );
-
-        } else if(isNumeral(c)) { // if not decimal, keep saving in number
-
-            element.push_back(c);
-
-        } else {
-
-            // integer saved
-            str >> element;
-            str << valueOfNumber;
+    if(i+1==expression.size()){
+        
+    valueOfNumber = atoi (element.c_str());
 
             element.clear();
             Token* ttoken = new Token(valueOfNumber);
             expressionStore.push_back(ttoken);
+        
+    }else{
+        
+        for(int j = i+1; j < expression.size(); j++) { // we save till end of number
+            c = expression.at(j);
 
-            return (j - 1);
+            if(c == '.') { // number has decimal points
+
+                return ( checkForDecimal(expression, element, j, str) );
+
+            } else if(isNumeral(c)) { // if not decimal, keep saving in number
+
+                element.push_back(c);
+
+            } else {
+
+                // integer saved
+
+                valueOfNumber = atoi (element.c_str());
+
+                element.clear();
+                Token* ttoken = new Token(valueOfNumber);
+                expressionStore.push_back(ttoken);
+
+                return (j - 1);
+
+            }    
 
         }
-
+        
     }
     
 }
@@ -176,13 +188,15 @@ int Lexer::checkForDecimal(string expression, string element, int j, stringstrea
     char c = expression.at(j);
     element.push_back(c);
 
-    for(int k = j; k < expression.size(); k++) { // we read till end of decimals
+    for(int k = j + 1; k < expression.size(); k++) { // we read till end of decimals
                                                  // or check for error
         c = expression.at(k);
+        j = k;
 
-        if(c == ',') {
+        if(c == '.') {
 
             // Error - more than one comma
+            cout << "Error : zwei punkte!" << endl;
 
         } else {
 
@@ -191,8 +205,7 @@ int Lexer::checkForDecimal(string expression, string element, int j, stringstrea
                 element.push_back(c);
 
             } else {
-
-                j = k - 1;
+                
                 break;
 
             }
@@ -200,15 +213,21 @@ int Lexer::checkForDecimal(string expression, string element, int j, stringstrea
         }
 
     }
+    
 
     // double saved
-    str >> element;
-    str << valueOfNum;
+    str << element; 
+    str >> valueOfNum;
+    
 
     element.clear();
     Token* ttoken = new Token(valueOfNum);
     expressionStore.push_back(ttoken);
-
+    
+    if(isNumeral(c)){
+      return j;    
+    }
+    
     return (j - 1);
     
 }
