@@ -1,0 +1,23 @@
+Rechtsrekursion:  
+Schritt 1: +-*/ (reguläre Grammatik)
+
+S -> {} | E
+E -> idF | numF
+F -> +E | -E| *E| /E | {}
+
+
+Schritt 2: () (kontextfreie Grammatik)
+
+S -> {} | E
+E -> idF | numF | (E)
+F -> +E | -E| *E| /E | {}
+
+
+Schritt 3 := (kontextfreie Grammatik)
+
+S -> {} | E
+E -> idF | numF | (E') | idG
+E'-> idF | numF | (E')
+F -> +E' | -E'| *E'| /E' | {}
+G -> :=H
+H -> num | id
