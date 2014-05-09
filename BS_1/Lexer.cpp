@@ -106,7 +106,7 @@ vector < vector <Token*> > Lexer::getStore() {
 
 int Lexer::checkForLiteral(string expression, string element, int i){
               
-    char c = expression.at(i);
+    char c = expression.at(i++);
     
     element.push_back(c);
 
@@ -126,6 +126,7 @@ int Lexer::checkForLiteral(string expression, string element, int i){
             }
 
         }
+        element.push_back(c);
 
     }
 
