@@ -24,23 +24,19 @@ public:
     Parser(vector < vector <Token*> >);
     virtual ~Parser();
     
-    void parse();
+    void parse(string);
     
 private:
-    string expression;
-    map<string, string> store;
+    map<Token*, Token*> store;
     
     vector < vector<Token*> > tokenStore;
     
-    float addition(float, float);
-    float subtraction(float, float);
-    float multiplication(float, float);
-    float division(float, float);
+    double addition(double, double);
+    double subtraction(double, double);
+    double multiplication(double, double);
+    double division(double, double);
     
-    int op(string);
-    vector<string> factors(string);
-    
-    float result(string);
+    double result(vector <Token*>);
     
 };
 

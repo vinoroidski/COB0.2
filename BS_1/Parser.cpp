@@ -10,35 +10,102 @@
 Parser::Parser() {
 }
 
-Parser::Parser(vector< vector<Token*> > store) {
+Parser::Parser(vector< vector<Token*> > tokensList) {
     
-    tokenStore = store;
+    tokenStore = tokensList;
     
 }
 
 Parser::~Parser() {
 }
 
-void Parser::parse() {
+void Parser::parse(string filePath) {
+
+    ofstream myFile;
+    double value;
+    myFile.open(filePath.c_str());
+    
+    for (int i = 0; i < tokenStore.size(); i++) {
+        
+        value = result(tokenStore.at(i));
+        if(value != 0) // if 0, we have operation of type pi := 8
+            myFile << value << endl;
+
+    }
+
+    myFile.close();
     
 }
 
-float Parser::addition(float a, float b) {
+double Parser::addition(double a, double b) {
     return (a + b);   
 }
 
-float Parser::subtraction(float a, float b) {
+double Parser::subtraction(double a, double b) {
     return (a - b);
 }
 
-float Parser::multiplication(float a, float b) {
+double Parser::multiplication(double a, double b) {
     return (a * b);
 }
 
-float Parser::division(float a, float b) {
+double Parser::division(double a, double b) {
     return (a / b);
 }
 
+double Parser::result(vector<Token*> factors) {
+    
+    Token* factor;
+    double parameter1;
+    double parameter2;
+    Token* param1;
+    Token* param2;
+    double result = 1;
+    string operation;
+    bool lookUpVariable = false;
+    
+    factor = factors.at(0);
+    param1 = factor;
+    
+    if(factor->getTokenType() == Token::constDouble)
+        parameter1 = factor->getNum();
+    else 
+        parameter1 = factor->getNumber();
+    
+    factor = factors.at(1);
+    operation = factor->getLiteral();
+    
+    factor = factors.at(2);
+    param2 = factor;
+    
+    if(factor->getTokenType() == Token::constDouble)
+        parameter2 = factor->getNum();
+    else 
+        parameter2 = factor->getNumber();
+    
+    if(operation != ":=") {
+        
+        if(operation == "+")
+            result = addition(parameter1, parameter2);
+        else if(operation == "-")
+            result = subtraction(parameter1, parameter2);
+        else if(operation == "*")
+            result = multiplication(parameter1, parameter2);
+        else if(operation == "/")
+            result = division(parameter1, parameter2);
+        
+    } else {
+        
+        result = 0;
+        store[param1] = param2;
+        
+    }
+    
+    return result;
+    
+}
+
+/*
 int Parser::op(string a) {
     
     for(int i = 0; i <  a.size(); i++) {
@@ -91,57 +158,4 @@ vector<string> Parser::factors(string a) {
     
     return result;
     
-}
-
-float Parser::result(string a) {
-    
-    float result = -1;
-    
-    stringstream str;
-    vector<float> factor;
-    
-    vector<string> numbers;
-    int operat;
-    float tmp;
-    
-    operat = op(a);
-    numbers = factors(a);
-    
-    if(operat != 5) { 
-    
-        for(int i = 0; i < numbers.size(); i++) {
-            
-            if(store.find(numbers.at(i)) != store.end())
-                str << store.at(numbers.at(i));
-                
-            else 
-                str << numbers.at(i);
-            
-            str >> tmp;
-
-            factor.push_back(tmp);
-
-            str << "";
-            str.clear();
-            
-        }
-
-        if(operat == 1) {
-            result = addition(factor.at(0), factor.at(1));
-        } else if (operat == 2) {
-            result = subtraction(factor.at(0), factor.at(1));
-        } else if (operat == 3) {
-            result = multiplication(factor.at(0), factor.at(1));
-        } else if (operat == 4) {
-            result = division(factor.at(0), factor.at(1));
-        }
-    
-    } else {
-        
-        store[numbers.at(0)] = numbers.at(1);
-        
-    }
-    
-    return result;
-    
-}
+}*/

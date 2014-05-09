@@ -32,33 +32,34 @@ int main(int argc, char** argv) {
     testLexer.tokenize("OutputBS.txt");
 
     store = testLexer.getStore();
+    
+    Parser testParser(store);
 
-    for (int i = 0; i < store.size(); i++) {
-        for (int j = 0; j < store.at(i).size(); j++) {
-            Token* token = store.at(i).at(j);
-            switch (token->getTokenType()) {
-
-                case Token::literal: cout << "Literal: " << token->getLiteral() << endl;
-                    break;
-                case Token::constInt: cout << "constInt: " << token->getNumber() << endl;
-                    break;
-                case Token::constDouble: cout << "constDouble: " << token->getNum() << endl;
-                    break;
-                case Token::operation: cout << "Operation: " << token->getLiteral() << endl;
-                    break;
-                default: cout << "Error - Unknown Type" << endl;
-
-            }
-
-        }
-        cout << endl;
-    }
-
-    //    Parser testParser(store);
-
-    //testParser.parse();
+    testParser.parse("ParsedBS.txt");
 
     return 0;
 
 }
 
+
+// Ausgabe von store mitsamt alle Tokens
+//    for (int i = 0; i < store.size(); i++) {
+//        for (int j = 0; j < store.at(i).size(); j++) {
+//            Token* token = store.at(i).at(j);
+//            switch (token->getTokenType()) {
+//
+//                case Token::literal: cout << "Literal: " << token->getLiteral() << endl;
+//                    break;
+//                case Token::constInt: cout << "constInt: " << token->getNumber() << endl;
+//                    break;
+//                case Token::constDouble: cout << "constDouble: " << token->getNum() << endl;
+//                    break;
+//                case Token::operation: cout << "Operation: " << token->getLiteral() << endl;
+//                    break;
+//                default: cout << "Error - Unknown Type" << endl;
+//
+//            }
+//
+//        }
+//        cout << endl;
+//    }
