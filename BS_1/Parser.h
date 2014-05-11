@@ -37,6 +37,8 @@ private:
     double division(double, double);
     
     double result(vector <Token*>);
+    double evaluateInt(int, int, string);
+    double evaluateDouble(double, double, string);
     
 };
 

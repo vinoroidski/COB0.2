@@ -28,8 +28,10 @@ void Parser::parse(string filePath) {
     for (int i = 0; i < tokenStore.size(); i++) {
         
         value = result(tokenStore.at(i));
-        if(value != 0) // if 0, we have operation of type pi := 8
+        if(value > -9998) // if -9998, we have operation of type pi := 8
             myFile << value << endl;
+        else if(value == -9999)
+            myFile << "No valid operation found!" << endl;
 
     }
 
@@ -55,107 +57,76 @@ double Parser::division(double a, double b) {
 
 double Parser::result(vector<Token*> factors) {
     
-    Token* factor;
-    double parameter1;
-    double parameter2;
-    Token* param1;
-    Token* param2;
-    double result = 1;
-    string operation;
-    bool lookUpVariable = false;
+    int result = 0;
     
-    factor = factors.at(0);
-    param1 = factor;
+    Token::Type type1 = factors.at(0)->getTokenType();
+    Token::Type type2 = factors.at(1)->getTokenType();
+    Token::Type type3 = factors.at(2)->getTokenType();
     
-    if(factor->getTokenType() == Token::constDouble)
-        parameter1 = factor->getNum();
-    else 
-        parameter1 = factor->getNumber();
+    Token* factor1 = factors.at(0);
+    Token* factor2 = factors.at(1);
+    Token* factor3 = factors.at(2);
     
-    factor = factors.at(1);
-    operation = factor->getLiteral();
-    
-    factor = factors.at(2);
-    param2 = factor;
-    
-    if(factor->getTokenType() == Token::constDouble)
-        parameter2 = factor->getNum();
-    else 
-        parameter2 = factor->getNumber();
-    
-    if(operation != ":=") {
-        
-        if(operation == "+")
-            result = addition(parameter1, parameter2);
-        else if(operation == "-")
-            result = subtraction(parameter1, parameter2);
-        else if(operation == "*")
-            result = multiplication(parameter1, parameter2);
-        else if(operation == "/")
-            result = division(parameter1, parameter2);
-        
-    } else {
-        
-        result = 0;
-        store[param1] = param2;
-        
-    }
+    if(type2 == Token::operation) {
+        if(type1 == type3 == Token::constInt && factor2->getLiteral() != ":=") {
+            
+            result = evaluateInt(factor1->getNumber(), factor3->getNumber(), factor2->getLiteral());
+            
+        }   else if(type1 == type3 == Token::constDouble) {
+            
+            result = evaluateDouble(factor1->getNum(), factor3->getNum(), factor2->getLiteral());
+            
+        }   else if(type1 == Token::literal && type3 == Token::constInt && factor2->getLiteral() == ":=") {
+            
+            
+            
+        }   else if(type1 == Token::literal && type3 == Token::constDouble && factor2->getLiteral() == ":=") {
+            
+            
+            
+        }   else if(type1 == type3 == Token::literal && factor2->getLiteral() == ":=") {
+            
+            
+            
+        }
+            
+    } else
+        result = -9999;
     
     return result;
     
 }
 
-/*
-int Parser::op(string a) {
+double Parser::evaluateInt(int a, int b, string op) {
     
-    for(int i = 0; i <  a.size(); i++) {
-        
-        switch(a.at(i)) {
-            
-            case '+'    :   return 1;
-                            break;
-                
-            case '-'    :   return 2;
-                            break;
-            
-            case '*'    :   return 3;
-                            break;
-               
-            case '/'    :   return 4;
-                            break;
-                            
-            case '='   :   return 5;
-                            break;
-                
-            default     :   break;
-                            
-        }
-        
-    }
+    int result;
     
-}
-
-vector<string> Parser::factors(string a) {
-    
-    vector<string> result;
-    string tmp;
-    
-    for(int i = 0; i < a.size(); i++) {
-        
-        if(a.at(i) != '+' && a.at(i) != '-' && a.at(i) != '*' && a.at(i) != '/' && a.at(i) != '=') {
-            tmp.push_back(a.at(i));
-        } else {
-            result.push_back(tmp);
-            tmp.clear();
-        }
-        
-        if(a.size() == ++i) {
-            result.push_back(tmp);
-            tmp.clear();
-        } else i--;
-        
-    }
+    if(op == "+")
+        result = (int) addition(a, b);
+    if(op == "-")
+        result = (int) subtraction(a, b);
+    if(op == "*")
+        result = (int) multiplication(a, b);
+    if(op == "/")
+        result = (int) division(a, b);
     
     return result;
     
-}*/
+}
+
+double Parser::evaluateDouble(double a, double b, string op) {
+    
+    double result;
+    
+    if(op == "+")
+        result = addition(a, b);
+    if(op == "-")
+        result = subtraction(a, b);
+    if(op == "*")
+        result = multiplication(a, b);
+    if(op == "/")
+        result = division(a, b);
+    
+    return result;
+    
+}
