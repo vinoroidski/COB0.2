@@ -78,11 +78,11 @@ double Parser::result(vector<Token*> factors) {
             
         }   else if(type1 == Token::literal && type3 == Token::constInt && factor2->getLiteral() == ":=") {
             
-            
+            store(factor1) = factor3->getNumber();
             
         }   else if(type1 == Token::literal && type3 == Token::constDouble && factor2->getLiteral() == ":=") {
             
-            
+            store(factor1) = factor3->getNum();
             
         }   else if(type1 == type3 == Token::literal && factor2->getLiteral() == ":=") {
             
