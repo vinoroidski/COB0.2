@@ -82,7 +82,7 @@ class ex2xx_driver;
 //unit: LEFTCURLY assignments RIGHTCURLY exp  { driver.result = $4; };
 unit: LEFTCURLY assignments RIGHTCURLY ;	// NEW
 
-assignments: assignments assignment {}
+assignments: assignment {}
            | /* Nothing.  */        {};
 
 //assignment: ID ASSIGN exp { driver.variables[*$1] = $3; delete $1; };
@@ -91,11 +91,12 @@ assignments: assignments assignment {}
 
 %left SUBADD;
 %left MULDIV;
-assignment: ID ASSIGN assignment { driver.variables[*$1] = $3; delete $1; }
+assignment: ID ASSIGN assignment { driver.variables[*$1] = $3; delete $1;
+				}
 		  | Value SUBADD assignment { $$ = $1 + $3; }
 		  | Value MULDIV assignment { $$ = $1 + $3; }
 		  | Value					{ $$ = $1; }
-		  | ;
+		  | {} ;
 
 
 Value:	ID	{ $$ = driver.variables[*$1]; delete $1; }

@@ -28,36 +28,32 @@
 
 echo && echo -e "\nTEST: Running a four line cac++ program..."
 cat >input <<EOF
-a := 4
-b := 2
-c := 19
-d := a + b * c
-d
+{ a := 4 }
 EOF
 
 ./ex2 input
 
-echo && echo -e "\nTEST: Running the same four line cac++ program with input from a pipe (stdin)..."
-cat input | ./ex2 -
+#echo && echo -e "\nTEST: Running the same four line cac++ program with input from a pipe (stdin)..."
+#cat input | ./ex2 -
 
-echo && echo -e "\nTEST: Running the same four line cac++ program with parse tracing turned on..."
-./ex2 -p input
+#echo && echo -e "\nTEST: Running the same four line cac++ program with parse tracing turned on..."
+#./ex2 -p input
 
 
 
-echo && echo -e "\nTEST: Running a cac++ program with undefined variables..."
-cat >input <<EOF
-a := 1
-d := a + b * c
-EOF
-./ex2 input
+#echo && echo -e "\nTEST: Running a cac++ program with undefined variables..."
+#cat >input <<EOF
+#a := 1
+#d := a + b * c
+#EOF
+#./ex2 input
 
-echo && echo -e "\nTEST: Running a cac++ program with scanner (lexer) tracing turned on..."
-cat >input <<EOF
-toto := 1
-toto
-EOF
-./ex2 -s input
+#echo && echo -e "\nTEST: Running a cac++ program with scanner (lexer) tracing turned on..."
+#cat >input <<EOF
+#toto := 1
+#toto
+#EOF
+#./ex2 -s input
 
 
 rm input

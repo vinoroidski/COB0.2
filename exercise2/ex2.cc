@@ -13,6 +13,7 @@ main (int argc, char *argv[])
     else if (argv[i] == std::string ("-s"))
       driver.trace_scanning = true;
     else if (!driver.parse (argv[i]))
-      std::cout << driver.result << std::endl;
+		//std::cout << driver.result << std::endl;
+      	std::cout << "End of test" << std::endl;
 }
 
