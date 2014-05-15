@@ -26,9 +26,9 @@
 #   set -x
 #}
 
-echo && echo -e "\nTEST: Running a four line cac++ program..."
+echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
-{ a := 4 }
+a := 4 + 5 -5 * 2 + 10 / 5
 EOF
 
 ./ex2 input

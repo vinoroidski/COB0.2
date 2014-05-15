@@ -54,12 +54,13 @@ class ex2xx_driver;
 
 %token		END	0 "end of file"
 %token		ASSIGN	":="
-%token		SUBADD	'+' '-'	// NEW
-%token		MULDIV	'*' '/'	// NEW
+//%token		SUBADD	'+' '-'	// NEW
+//%token		MULDIV	'*' '/'	// NEW
 %token	<sval>	ID "identifier"
 %token	<ival>	NUMBER     "number"
 %token	<dval>	DOUBLE     "Double"
 %type	<ival>	assignment
+%type	<dval>	exp
 %type	<dval>	Const
 %type	<dval>	Value
 %token		LEFTCURLY	"{"
@@ -79,44 +80,27 @@ class ex2xx_driver;
 
 %%
 %start unit;
-//unit: LEFTCURLY assignments RIGHTCURLY exp  { driver.result = $4; };
-unit: LEFTCURLY assignments RIGHTCURLY ;	// NEW
-
-assignments: assignment {}
-           | /* Nothing.  */        {};
-
-//assignment: ID ASSIGN exp { driver.variables[*$1] = $3; delete $1; };
-
-// NEW *******************************************************************
-
-%left SUBADD;
-%left MULDIV;
-assignment: ID ASSIGN assignment { driver.variables[*$1] = $3; delete $1;
-				}
-		  | Value SUBADD assignment { $$ = $1 + $3; }
-		  | Value MULDIV assignment { $$ = $1 + $3; }
-		  | Value					{ $$ = $1; }
-		  | {} ;
+unit: assignment { driver.result = $1; } ;
 
 
-Value:	ID	{ $$ = driver.variables[*$1]; delete $1; }
+%left '+' '-';
+%left '*' '/';
+assignment:	ID ASSIGN exp { driver.variables[*$1] = $3; 
+// The problem was here, we didnt return the value of $3 to assignment
+$$ = $3;};
+// *******************************************************************
+
+exp:  exp '+' exp { $$ = $1 + $3; }
+	| exp '-' exp { $$ = $1 - $3; }
+	| exp '*' exp { $$ = $1 * $3; }
+	| exp '/' exp { $$ = $1 / $3; }
+	| Value ;
+
+Value:	ID { $$ = driver.variables[*$1]; delete $1; }
 	  | Const ;
 	  
 Const: NUMBER { $$ = $1; }
 	 | DOUBLE { $$ = $1; } ;
-	 
-// ************************************************************************
-
-/* %left '+' '-';
-%left '*' '/'; */
-
- 
-/*	exp '+' exp   { $$ = $1 + $3; }
-   | exp '-' exp   { $$ = $1 - $3; }
-   | exp '*' exp   { $$ = $1 * $3; }
-   | exp '/' exp   { $$ = $1 / $3; }
-   | "identifier"  { $$ = driver.variables[*$1]; delete $1; }
-   | Const ;*/
    
 %%
 
