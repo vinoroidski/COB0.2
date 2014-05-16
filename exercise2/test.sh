@@ -28,7 +28,7 @@
 
 echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
-a := 4 + 5 -5 * 2 + 10 / 5
+a := 4 + (5 + (4 / 2))
 EOF
 
 ./ex2 input

@@ -65,6 +65,10 @@ blank [ \t]
 
 ":="     return token::ASSIGN;
 "{"     return token::LEFTCURLY;
+"}"	return token::RIGHTCURLY;
+"("	return token::LEFTBRACKET;
+")"	return token::RIGHTBRACKET;
+
 
 
 

@@ -63,6 +63,8 @@ class ex2xx_driver;
 %type	<dval>	exp
 %type	<dval>	Const
 %type	<dval>	Value
+%token		LEFTBRACKET	"("
+%token		RIGHTBRACKET	")"
 %token		LEFTCURLY	"{"
 %token		RIGHTCURLY	"}"
 
@@ -85,6 +87,7 @@ unit: assignment { driver.result = $1; } ;
 
 %left '+' '-';
 %left '*' '/';
+%left '(' ')';
 assignment:	ID ASSIGN exp { driver.variables[*$1] = $3; 
 // The problem was here, we didnt return the value of $3 to assignment
 $$ = $3;};
@@ -94,7 +97,15 @@ exp:  exp '+' exp { $$ = $1 + $3; }
 	| exp '-' exp { $$ = $1 - $3; }
 	| exp '*' exp { $$ = $1 * $3; }
 	| exp '/' exp { $$ = $1 / $3; }
-	| Value ;
+	| Value
+	| LEFTBRACKET exp { $$ = $2; }
+	| Value RIGHTBRACKET { $$ = $1; }
+	| Value RIGHTBRACKET RIGHTBRACKET;
+	| Value RIGHTBRACKET '+' exp;
+	| Value RIGHTBRACKET '-' exp;
+	| Value RIGHTBRACKET '*' exp;
+	| Value RIGHTBRACKET '/' exp;
+	| RIGHTBRACKET;
 
 Value:	ID { $$ = driver.variables[*$1]; delete $1; }
 	  | Const ;
