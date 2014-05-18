@@ -28,7 +28,14 @@
 
 echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
-a := 4 + (5 + (4 / 2))
+if( 2 < 3) {
+	if( 8 < 100){
+		a := 3 * 6
+	}
+}
+else{
+	b := 10
+}
 EOF
 
 ./ex2 input

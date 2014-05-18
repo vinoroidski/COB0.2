@@ -63,14 +63,15 @@ blank [ \t]
 [-+*/]   return yy::ex2xx_parser::token_type (yytext[0]);
 
 
-":="     return token::ASSIGN;
+":="    return token::ASSIGN;
 "{"     return token::LEFTCURLY;
-"}"	return token::RIGHTCURLY;
-"("	return token::LEFTBRACKET;
-")"	return token::RIGHTBRACKET;
-
-
-
+"}"		return token::RIGHTCURLY;
+"("		return token::LEFTBRACKET;
+")"		return token::RIGHTBRACKET;
+"if"	return token::IF;
+"else"	return token::ELSE;
+"<"		return token::RELOP;
+		
 
 	/* Numbers */
 {int}    {

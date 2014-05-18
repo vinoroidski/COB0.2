@@ -11,7 +11,9 @@
  * (flex input).
  *
  ***********************/
-
+%{
+#include <string.h>
+%}
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "2.5"
 %defines
@@ -45,6 +47,7 @@ class ex2xx_driver;
 {
   int          ival;
   double		dval;
+  bool			bval;
   std::string *sval;
 };
 
@@ -56,17 +59,22 @@ class ex2xx_driver;
 %token		ASSIGN	":="
 //%token		SUBADD	'+' '-'	// NEW
 //%token		MULDIV	'*' '/'	// NEW
-%token	<sval>	ID "identifier"
-%token	<ival>	NUMBER     "number"
-%token	<dval>	DOUBLE     "Double"
-%type	<ival>	assignment
-%type	<dval>	exp
-%type	<dval>	Const
-%type	<dval>	Value
-%token		LEFTBRACKET	"("
+%token		<sval>	ID 		"identifier"
+%token		<ival>	NUMBER  "number"
+%token		<dval>	DOUBLE	"Double"
+%type		<ival>	assignment
+%type		<dval>	exp
+%type		<dval>	Const
+%type		<dval>	Value
+%type		<bval>	Cond
+%type		<sval>	RelOp
+%type		<sval>	RELOP	"<"
+%token		LEFTBRACKET		"("
 %token		RIGHTBRACKET	")"
-%token		LEFTCURLY	"{"
-%token		RIGHTCURLY	"}"
+%token		LEFTCURLY		"{"
+%token		RIGHTCURLY		"}"
+%token		IF				"if"
+%token		ELSE			"else"
 
 // Printer Macro is used for tracing the parser,
 // Compare Bison Manual
@@ -82,18 +90,35 @@ class ex2xx_driver;
 
 %%
 %start unit;
-unit: assignment { driver.result = $1; } ;
+unit: 	| assignment { driver.result = $1; } 
+		| IfStatement ;
+		
+IfStatement: IF LEFTBRACKET Cond RIGHTBRACKET LEFTCURLY unit  RIGHTCURLY ELSE LEFTCURLY unit  RIGHTCURLY 
+			|IF LEFTBRACKET Cond RIGHTBRACKET LEFTCURLY unit  RIGHTCURLY ;
+
+%left RELOP;
+Cond:	exp RelOp exp ;
 
 
+RelOp:	 RELOP ;
+
+	
+		
 %left '+' '-';
 %left '*' '/';
-%left '(' ')';
-assignment:	ID ASSIGN exp { driver.variables[*$1] = $3; 
-// The problem was here, we didnt return the value of $3 to assignment
-$$ = $3;};
-// *******************************************************************
+//%left '(' ')';
+assignment:	ID ASSIGN exp { driver.variables[*$1] = $3; $$ = $3;};
+
 
 exp:  exp '+' exp { $$ = $1 + $3; }
+	| exp '-' exp { $$ = $1 - $3; }
+	| exp '*' exp { $$ = $1 * $3; }
+	| exp '/' exp { $$ = $1 / $3; }
+	| Value
+	| LEFTBRACKET exp RIGHTBRACKET { $$ = $2; }
+	;	
+
+/*exp:  exp '+' exp { $$ = $1 + $3; }
 	| exp '-' exp { $$ = $1 - $3; }
 	| exp '*' exp { $$ = $1 * $3; }
 	| exp '/' exp { $$ = $1 / $3; }
@@ -105,7 +130,7 @@ exp:  exp '+' exp { $$ = $1 + $3; }
 	| Value RIGHTBRACKET '-' exp;
 	| Value RIGHTBRACKET '*' exp;
 	| Value RIGHTBRACKET '/' exp;
-	| RIGHTBRACKET;
+	| RIGHTBRACKET;*/
 
 Value:	ID { $$ = driver.variables[*$1]; delete $1; }
 	  | Const ;
