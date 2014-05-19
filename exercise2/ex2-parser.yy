@@ -56,25 +56,30 @@ class ex2xx_driver;
 }
 
 %token		END	0 "end of file"
-%token		ASSIGN	":="
-//%token		SUBADD	'+' '-'	// NEW
-//%token		MULDIV	'*' '/'	// NEW
-%token		<sval>	ID 		"identifier"
-%token		<ival>	NUMBER  "number"
-%token		<dval>	DOUBLE	"Double"
-%type		<ival>	assignment
-%type		<dval>	exp
-%type		<dval>	Const
-%type		<dval>	Value
-%type		<bval>	Cond
-%type		<sval>	RelOp
-%type		<sval>	RELOP	"<"
+%token		ASSIGN			":="
+%token		ASSIGN2			"="
+%token		COMMA			","
+%token		SEMICOLON		";"
+%token		FUNC			"func"
+%token		MAIN			"main"
+%token		VAR				"var"
+%token		TYPE			"int"
+%token		RELOP			"<"
+%token		INCR			"++"
 %token		LEFTBRACKET		"("
 %token		RIGHTBRACKET	")"
 %token		LEFTCURLY		"{"
 %token		RIGHTCURLY		"}"
 %token		IF				"if"
 %token		ELSE			"else"
+%token		FOR				"for"
+%token		<sval>	ID 		"identifier"
+%token		<ival>	NUMBER  "number"
+%token		<dval>	DOUBLE	"Double"
+%type		<dval>	Const
+%type		<dval>	Value
+%type		<dval>	Exp
+%type		<ival>	Assignment
 
 // Printer Macro is used for tracing the parser,
 // Compare Bison Manual
@@ -89,55 +94,54 @@ class ex2xx_driver;
 %printer    { debug_stream () << $$; } <ival>
 
 %%
-%start unit;
-unit: 	| assignment { driver.result = $1; } 
-		| IfStatement ;
-		
-IfStatement: IF LEFTBRACKET Cond RIGHTBRACKET LEFTCURLY unit  RIGHTCURLY ELSE LEFTCURLY unit  RIGHTCURLY 
-			|IF LEFTBRACKET Cond RIGHTBRACKET LEFTCURLY unit  RIGHTCURLY ;
 
 %left RELOP;
-Cond:	exp RelOp exp ;
-
-
-RelOp:	 RELOP ;
-
-	
-		
 %left '+' '-';
 %left '*' '/';
-//%left '(' ')';
-assignment:	ID ASSIGN exp { driver.variables[*$1] = $3; $$ = $3;};
+%start Program ;
 
+Program : FUNC MAIN LEFTBRACKET RIGHTBRACKET Block ;
 
-exp:  exp '+' exp { $$ = $1 + $3; }
-	| exp '-' exp { $$ = $1 - $3; }
-	| exp '*' exp { $$ = $1 * $3; }
-	| exp '/' exp { $$ = $1 / $3; }
-	| Value
-	| LEFTBRACKET exp RIGHTBRACKET { $$ = $2; }
-	;	
-
-/*exp:  exp '+' exp { $$ = $1 + $3; }
-	| exp '-' exp { $$ = $1 - $3; }
-	| exp '*' exp { $$ = $1 * $3; }
-	| exp '/' exp { $$ = $1 / $3; }
-	| Value
-	| LEFTBRACKET exp { $$ = $2; }
-	| Value RIGHTBRACKET { $$ = $1; }
-	| Value RIGHTBRACKET RIGHTBRACKET;
-	| Value RIGHTBRACKET '+' exp;
-	| Value RIGHTBRACKET '-' exp;
-	| Value RIGHTBRACKET '*' exp;
-	| Value RIGHTBRACKET '/' exp;
-	| RIGHTBRACKET;*/
-
+Block :   LEFTCURLY Statement RIGHTCURLY ;
+		
+Statement:	  Var_Block
+			| If_Statement 
+			| Var_Block Statement 
+			| If_Statement Statement 
+			| Assignment
+			| Assignment Statement
+			| For_Statement ;
+			
+Var_Block :	  VAR Id_List TYPE
+			| VAR Id_List TYPE ASSIGN2 Value_List ;
+	
+If_Statement: 	  IF LEFTBRACKET Exp RIGHTBRACKET Block ELSE Block
+				| IF LEFTBRACKET Exp RIGHTBRACKET Block ;
+				
+For_Statement: FOR Assignment SEMICOLON ID RELOP Value SEMICOLON ID INCR Block ;
+		
+Id_List:	  ID
+			| ID COMMA Id_List ;
+			
+Value_List:	  Exp
+			| Exp COMMA Value_List ;
+	
+Exp:  Exp '+' Exp { $$ = $1 + $3; }
+	| Exp '-' Exp { $$ = $1 + $3; }
+	| Exp '*' Exp { $$ = $1 + $3; }
+	| Exp '/' Exp { $$ = $1 + $3; }
+	| Exp RELOP Exp
+	| LEFTBRACKET Exp RIGHTBRACKET { $$ = $2; }
+	| Value { $$ = $1; };
+	
 Value:	ID { $$ = driver.variables[*$1]; delete $1; }
 	  | Const ;
-	  
+	    
 Const: NUMBER { $$ = $1; }
 	 | DOUBLE { $$ = $1; } ;
-   
+
+Assignment:	ID ASSIGN Exp { driver.variables[*$1] = $3; $$ = $3;} ;
+
 %%
 
 void

@@ -63,14 +63,27 @@ blank [ \t]
 [-+*/]   return yy::ex2xx_parser::token_type (yytext[0]);
 
 
-":="    return token::ASSIGN;
-"{"     return token::LEFTCURLY;
-"}"		return token::RIGHTCURLY;
-"("		return token::LEFTBRACKET;
-")"		return token::RIGHTBRACKET;
-"if"	return token::IF;
-"else"	return token::ELSE;
-"<"		return token::RELOP;
+":="    	return token::ASSIGN;
+"="    		return token::ASSIGN2;
+","    		return token::COMMA;
+";"    		return token::SEMICOLON;
+"++"    	return token::INCR;
+"<"			return token::RELOP;
+">"			return token::RELOP;
+"<="		return token::RELOP;
+">="		return token::RELOP;
+"{"     	return token::LEFTCURLY;
+"}"			return token::RIGHTCURLY;
+"("			return token::LEFTBRACKET;
+")"			return token::RIGHTBRACKET;
+"if"		return token::IF;
+"else"		return token::ELSE;
+"for"		return token::FOR;
+"func"		return token::FUNC;
+"main"		return token::MAIN;
+"var"		return token::VAR;
+"int"		return token::TYPE;
+"double"	return token::TYPE;
 		
 
 	/* Numbers */

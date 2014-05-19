@@ -28,13 +28,18 @@
 
 echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
-if( 2 < 3) {
-	if( 8 < 100){
-		a := 3 * 6
+func main(){
+	var c double
+	var a, b int = 1, c
+	if(3 < 4){
+		a := 7 + 1
 	}
-}
-else{
-	b := 10
+	else{
+		b := 2
+	}
+	for i := 0; i <= 10; i++{
+		sum := i + 2
+	}
 }
 EOF
 
