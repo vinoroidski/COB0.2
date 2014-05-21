@@ -3,6 +3,7 @@
 # define EX2XX_DRIVER_HH
 # include <string>
 # include <map>
+# include <vector>
 # include "ex2-parser.hh"
 
 // Tell Flex the lexer's prototype ...

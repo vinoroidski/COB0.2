@@ -28,18 +28,15 @@
 
 echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
+func f(x int, y int) int {
+	return x + y
+}
 func main(){
-	var c double
-	var a, b int = 1, c
-	if(3 < 4){
-		a := 7 + 1
-	}
-	else{
-		b := 2
-	}
-	for i := 0; i <= 10; i++{
-		sum := i + 2
-	}
+	var a, c, b double = 2*2, 3+7
+	a := 1 + 2
+	b := 4
+	var e int = 2
+	c := e
 }
 EOF
 

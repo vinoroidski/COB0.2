@@ -4,8 +4,8 @@
 ex2xx_driver::ex2xx_driver ()
   : trace_scanning (false), trace_parsing (false)
 {
-  variables["one"] = 1;
-  variables["two"] = 2;
+  //variables["one"] = 1;
+  //variables["two"] = 2;
 }
 
 ex2xx_driver::~ex2xx_driver ()

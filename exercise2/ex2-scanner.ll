@@ -17,6 +17,7 @@
 # include <cerrno>
 # include <climits>
 # include <string>
+# include <vector>
 # include "ex2-driver.hh"
 # include "ex2-parser.hh"
 
@@ -84,6 +85,8 @@ blank [ \t]
 "var"		return token::VAR;
 "int"		return token::TYPE;
 "double"	return token::TYPE;
+"return"	return token::RETURN;
+
 		
 
 	/* Numbers */

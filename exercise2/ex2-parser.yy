@@ -12,7 +12,12 @@
  *
  ***********************/
 %{
-#include <string.h>
+#include <string>
+#include <vector>
+
+std::vector<std::string> vId;
+std::vector<double> vVal;
+
 %}
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "2.5"
@@ -64,6 +69,7 @@ class ex2xx_driver;
 %token		MAIN			"main"
 %token		VAR				"var"
 %token		TYPE			"int"
+%token		RETURN			"return"
 %token		RELOP			"<"
 %token		INCR			"++"
 %token		LEFTBRACKET		"("
@@ -78,8 +84,13 @@ class ex2xx_driver;
 %token		<dval>	DOUBLE	"Double"
 %type		<dval>	Const
 %type		<dval>	Value
+%type		<sval>	Id_List
+%type		<dval>	Value_List
 %type		<dval>	Exp
 %type		<ival>	Assignment
+%type		<sval>	Param_List
+%type		<sval>	Param
+
 
 // Printer Macro is used for tracing the parser,
 // Compare Bison Manual
@@ -94,15 +105,34 @@ class ex2xx_driver;
 %printer    { debug_stream () << $$; } <ival>
 
 %%
-
 %left RELOP;
 %left '+' '-';
 %left '*' '/';
 %start Program ;
 
-Program : FUNC MAIN LEFTBRACKET RIGHTBRACKET Block ;
+Program :	  FUNC ID LEFTBRACKET Param_List  
+				{ 
+				for(int i = 0; i < vId.size(); i++){
+					if(i < vVal.size())
+						driver.variables[vId[i]] = vVal[i];
+					else
+						driver.variables[vId[i]];
+				}
+				vId.clear();
+				vVal.clear();
+				} 	
+				RIGHTBRACKET TYPE Block Main 
+			| Main ;
+			
+Main:	FUNC MAIN LEFTBRACKET RIGHTBRACKET Block ;
 
-Block :   LEFTCURLY Statement RIGHTCURLY ;
+Param_List:	  Param { $$ = $1; vId.push_back(*$1); } 
+			| Param COMMA { vId.push_back(*$1); } Param_List ;
+			
+Param:	  ID TYPE ;
+
+Block :   LEFTCURLY Statement RIGHTCURLY 
+		| LEFTCURLY Statement_Func RIGHTCURLY;
 		
 Statement:	  Var_Block
 			| If_Statement 
@@ -112,19 +142,31 @@ Statement:	  Var_Block
 			| Assignment Statement
 			| For_Statement ;
 			
+Statement_Func:	  Statement RETURN Exp 
+				| RETURN Exp ;
+			
 Var_Block :	  VAR Id_List TYPE
-			| VAR Id_List TYPE ASSIGN2 Value_List ;
+			| VAR Id_List TYPE ASSIGN2 Value_List { 
+				for(int i = 0; i < vId.size(); i++){
+					if(i < vVal.size())
+						driver.variables[vId[i]] = vVal[i];
+					else
+						driver.variables[vId[i]];
+				}
+				vId.clear();
+				vVal.clear();
+			};
 	
 If_Statement: 	  IF LEFTBRACKET Exp RIGHTBRACKET Block ELSE Block
 				| IF LEFTBRACKET Exp RIGHTBRACKET Block ;
 				
 For_Statement: FOR Assignment SEMICOLON ID RELOP Value SEMICOLON ID INCR Block ;
 		
-Id_List:	  ID
-			| ID COMMA Id_List ;
+Id_List:	  ID { $$ = $1; vId.push_back(*$1); }
+			| ID COMMA { vId.push_back(*$1); } Id_List ;
 			
-Value_List:	  Exp
-			| Exp COMMA Value_List ;
+Value_List:	  Exp { $$ = $1; vVal.push_back($1); }
+			| Exp COMMA { vVal.push_back($1); } Value_List ;
 	
 Exp:  Exp '+' Exp { $$ = $1 + $3; }
 	| Exp '-' Exp { $$ = $1 + $3; }
@@ -141,7 +183,7 @@ Const: NUMBER { $$ = $1; }
 	 | DOUBLE { $$ = $1; } ;
 
 Assignment:	ID ASSIGN Exp { driver.variables[*$1] = $3; $$ = $3;} ;
-
+ 
 %%
 
 void
