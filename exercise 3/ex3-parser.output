@@ -1,0 +1,253 @@
+Terminals unused in grammar
+
+   ":="
+   "="
+   ","
+   ";"
+   "func"
+   "main"
+   "var"
+   "int"
+   "return"
+   "<"
+   "++"
+   "("
+   ")"
+   "{"
+   "}"
+   "if"
+   "else"
+   "for"
+   "identifier"
+
+
+Grammar
+
+    0 $accept: Program "end of file"
+
+    1 Program: Exp
+
+    2 Exp: Exp '+' Exp
+    3    | Exp '-' Exp
+    4    | Exp '*' Exp
+    5    | Exp '/' Exp
+    6    | Value
+
+    7 Value: Const
+
+    8 Const: "number"
+    9      | "Double"
+
+
+Terminals, with rules where they appear
+
+"end of file" (0) 0
+'*' (42) 4
+'+' (43) 2
+'-' (45) 3
+'/' (47) 5
+error (256)
+":=" (258)
+"=" (259)
+"," (260)
+";" (261)
+"func" (262)
+"main" (263)
+"var" (264)
+"int" (265)
+"return" (266)
+"<" (267)
+"++" (268)
+"(" (269)
+")" (270)
+"{" (271)
+"}" (272)
+"if" (273)
+"else" (274)
+"for" (275)
+"identifier" (276)
+"number" (277) 8
+"Double" (278) 9
+
+
+Nonterminals, with rules where they appear
+
+$accept (28)
+    on left: 0
+Program (29)
+    on left: 1, on right: 0
+Exp (30)
+    on left: 2 3 4 5 6, on right: 1 2 3 4 5
+Value (31)
+    on left: 7, on right: 6
+Const (32)
+    on left: 8 9, on right: 7
+
+
+State 0
+
+    0 $accept: . Program "end of file"
+
+    "number"  shift, and go to state 1
+    "Double"  shift, and go to state 2
+
+    Program  go to state 3
+    Exp      go to state 4
+    Value    go to state 5
+    Const    go to state 6
+
+
+State 1
+
+    8 Const: "number" .
+
+    $default  reduce using rule 8 (Const)
+
+
+State 2
+
+    9 Const: "Double" .
+
+    $default  reduce using rule 9 (Const)
+
+
+State 3
+
+    0 $accept: Program . "end of file"
+
+    "end of file"  shift, and go to state 7
+
+
+State 4
+
+    1 Program: Exp .
+    2 Exp: Exp . '+' Exp
+    3    | Exp . '-' Exp
+    4    | Exp . '*' Exp
+    5    | Exp . '/' Exp
+
+    '+'  shift, and go to state 8
+    '-'  shift, and go to state 9
+    '*'  shift, and go to state 10
+    '/'  shift, and go to state 11
+
+    $default  reduce using rule 1 (Program)
+
+
+State 5
+
+    6 Exp: Value .
+
+    $default  reduce using rule 6 (Exp)
+
+
+State 6
+
+    7 Value: Const .
+
+    $default  reduce using rule 7 (Value)
+
+
+State 7
+
+    0 $accept: Program "end of file" .
+
+    $default  accept
+
+
+State 8
+
+    2 Exp: Exp '+' . Exp
+
+    "number"  shift, and go to state 1
+    "Double"  shift, and go to state 2
+
+    Exp    go to state 12
+    Value  go to state 5
+    Const  go to state 6
+
+
+State 9
+
+    3 Exp: Exp '-' . Exp
+
+    "number"  shift, and go to state 1
+    "Double"  shift, and go to state 2
+
+    Exp    go to state 13
+    Value  go to state 5
+    Const  go to state 6
+
+
+State 10
+
+    4 Exp: Exp '*' . Exp
+
+    "number"  shift, and go to state 1
+    "Double"  shift, and go to state 2
+
+    Exp    go to state 14
+    Value  go to state 5
+    Const  go to state 6
+
+
+State 11
+
+    5 Exp: Exp '/' . Exp
+
+    "number"  shift, and go to state 1
+    "Double"  shift, and go to state 2
+
+    Exp    go to state 15
+    Value  go to state 5
+    Const  go to state 6
+
+
+State 12
+
+    2 Exp: Exp . '+' Exp
+    2    | Exp '+' Exp .
+    3    | Exp . '-' Exp
+    4    | Exp . '*' Exp
+    5    | Exp . '/' Exp
+
+    '*'  shift, and go to state 10
+    '/'  shift, and go to state 11
+
+    $default  reduce using rule 2 (Exp)
+
+
+State 13
+
+    2 Exp: Exp . '+' Exp
+    3    | Exp . '-' Exp
+    3    | Exp '-' Exp .
+    4    | Exp . '*' Exp
+    5    | Exp . '/' Exp
+
+    '*'  shift, and go to state 10
+    '/'  shift, and go to state 11
+
+    $default  reduce using rule 3 (Exp)
+
+
+State 14
+
+    2 Exp: Exp . '+' Exp
+    3    | Exp . '-' Exp
+    4    | Exp . '*' Exp
+    4    | Exp '*' Exp .
+    5    | Exp . '/' Exp
+
+    $default  reduce using rule 4 (Exp)
+
+
+State 15
+
+    2 Exp: Exp . '+' Exp
+    3    | Exp . '-' Exp
+    4    | Exp . '*' Exp
+    5    | Exp . '/' Exp
+    5    | Exp '/' Exp .
+
+    $default  reduce using rule 5 (Exp)
