@@ -98,6 +98,12 @@ blank [ \t]
            yylval->ival = n;
            return token::NUMBER;
          }
+         
+{double}    {
+           double n =atof(yytext);
+           yylval->dval = n;
+           return token::DOUBLE;
+         }
 
 
 	/* Id's (Names) */
