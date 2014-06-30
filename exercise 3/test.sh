@@ -29,6 +29,7 @@
 echo && echo -e "\nTEST: Running program..."
 cat >input <<EOF
 a := 3+3+2
+b := 2
 EOF
 
 ./ex3 input

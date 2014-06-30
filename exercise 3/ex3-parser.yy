@@ -152,7 +152,7 @@ Statement:	  Var_Block
 			| Var_Block Statement 
 			| If_Statement Statement 
 			| Assignment
-			| Assignment Statement
+			| Assignment Statement { $$->setNext($1); $$ = $1; } ; // careful changes made to original grammar
 			| For_Statement ;
 			
 Statement_Func:	  Statement RETURN Exp 
