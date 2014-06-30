@@ -32,9 +32,9 @@ YFLAGS=-v -d
 
 HEADERS=ex3-parser.hh ex3-scanner.hh
 
-ex3 : ex3.o ex3-scanner.o ex3-parser.o ex3-driver.o NumberExprAST.o BinaryExprAST.o Root.o
+ex3 : ex3.o ex3-scanner.o ex3-parser.o ex3-driver.o NumberExprAST.o BinaryExprAST.o Root.o VariableExprAST.o
 
-ex3.o : ex3.cc ex3-driver.hh ex3-parser.hh NumberExprAST.h BinaryExprAST.h ExprAST.h Root.h
+ex3.o : ex3.cc ex3-driver.hh ex3-parser.hh NumberExprAST.h BinaryExprAST.h ExprAST.h Root.h VariableExprAST.h
 
 %.o: %.cc
 	$(CC) $(CFLAGS) -o $@ -c $<

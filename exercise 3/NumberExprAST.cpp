@@ -24,5 +24,5 @@ void NumberExprAST::setVal(int n){
 }
 
 void NumberExprAST::print() {
-	std::cout << Val;
+	std::cout <<Val;
 }

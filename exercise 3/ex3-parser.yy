@@ -28,6 +28,7 @@ std::vector<double> vVal;
 %code requires {
 #include "BinaryExprAST.h"
 #include "NumberExprAST.h"
+#include "VariableExprAST.h"
 #include "Root.h"
 class ex3xx_driver;
 }
@@ -90,11 +91,13 @@ class ex3xx_driver;
 %token		<ival>	NUMBER  "number"
 %token		<dval>	DOUBLE	"Double"
 %type		<nExp>	Const
-%type		<nExp>	Value
+//%type		<nExp>	Value
 //%type		<sval>	Id_List
 //%type		<dval>	Value_List
+%type		<exp>	Main
+%type		<exp>	Statement
 %type		<exp>	Exp
-//%type		<ival>	Assignment
+%type		<exp>	Assignment
 //%type		<sval>	Param_List
 //%type		<sval>	Param
 %type		<root> Program
@@ -179,21 +182,32 @@ Value_List:	  Exp { $$ = $1; vVal.push_back($1); }
 			| Exp COMMA { vVal.push_back($1); } Value_List ;
 	*/
 
-Program: Exp { Root* root = new Root(); root->setLHS($1); root->print(); $$ = root; };
+Program: Main { Root* root = new Root(); root->setLHS($1); root->print(); $$ = root; };
+			
+Main:	Statement { $$ = $1; };
 
-Exp:  Exp '+' Exp { /*$$ = $1 + $3;*/ $$ = new BinaryExprAST("+", $1, $3); }
+Statement: 	 Assignment { $$ = $1; };
+			//| Assignment Statement;
+
+Exp:  Exp '+' Exp { $$ = new BinaryExprAST("+", $1, $3); }
 	| Exp '-' Exp { $$ = new BinaryExprAST("-", $1, $3); }
 	| Exp '*' Exp { $$ = new BinaryExprAST("*", $1, $3); }
 	| Exp '/' Exp { $$ = new BinaryExprAST("/", $1, $3); }
+	| Const {$$=$1; };
 	//| Exp RELOP Exp
 	//| LEFTBRACKET Exp RIGHTBRACKET { $$ = $2; }
-	| Value { $$ = $1; }
+	//| Value { $$ = $1; }
 	
-Value:	//ID { $$ = driver.variables[*$1]; delete $1; }
-	Const ;
+//Value:	ID { $$ = driver.variables[*$1]; delete $1; }
+//	Const ;
+	
+//Value:	ID { $$ = driver.variables[*$1]; delete $1; }
 	    
-Const: NUMBER { $$ = new NumberExprAST($1); } ;
-       | DOUBLE { /*$$ = $1;*/ $$ = new NumberExprAST($1); };
+Const: NUMBER { $$ = new NumberExprAST($1); } 
+       | DOUBLE { $$ = new NumberExprAST($1); };
+
+Assignment:	ID ASSIGN Exp {$$ = new VariableExprAST(*$1, $3); };
+ 
 
 //Assignment:	ID ASSIGN Exp { driver.variables[*$1] = $3; $$ = $3;} ;
  

@@ -3,9 +3,12 @@
 /// VariableExprAST - Expression class for referencing a variable, like "a".
 class VariableExprAST : public ExprAST {
 
-	std::string Name;
+private:
+	std::string name;
+	ExprAST *rhs;
 
 public:
-  VariableExprAST(const std::string &name) : Name(name) {}
+  VariableExprAST(std::string name, ExprAST *rhs);
+  void print();
 
 };
